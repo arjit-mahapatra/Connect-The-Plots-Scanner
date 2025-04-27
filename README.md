@@ -108,11 +108,16 @@ This application is fully configured for deployment on Render.com with a `render
    - Click "Apply"
 
 4. **Configure Environment Variables**:
-   - Render will automatically set up the MongoDB database and necessary environment variables
+   - The application is pre-configured to use a MongoDB Atlas instance
    - For OpenAI integration, add your API key manually in the backend service environment variables:
      ```
      AI_PROVIDER=openai
      AI_API_KEY=your_openai_api_key
+     ```
+   - The MongoDB connection is already set in render.yaml, but you can update it if needed:
+     ```
+     MONGO_URL=your_mongodb_atlas_connection_string
+     DB_NAME=stock_news_db
      ```
 
 5. **Wait for Deployment**:
