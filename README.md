@@ -81,7 +81,7 @@ This project is configured for easy deployment to Render using the included `ren
 
 ### Deployment Steps
 
-#### Option 1: Using the Render Dashboard
+#### Option 1: Using the Render Dashboard (Recommended)
 
 1. Fork or clone this repository to your GitHub account.
 
@@ -91,11 +91,19 @@ This project is configured for easy deployment to Render using the included `ren
 
 4. Connect your GitHub account and select the repository.
 
-5. Render will automatically detect the `render.yaml` file and create the necessary services.
+5. Render will automatically detect the `render.yaml` file and create the necessary services:
+   - Backend API service (Docker)
+   - Frontend web service (Node.js)
 
-6. Add your NewsAPI key as an environment variable for the backend service.
+6. Add your NewsAPI key as an environment variable for the backend service:
+   - Go to the backend service in the Render dashboard
+   - Navigate to the "Environment" tab
+   - Add a new environment variable:
+     - Key: `NEWS_API_KEY`
+     - Value: Your NewsAPI key
+   - Save changes and deploy
 
-7. Deploy the services.
+7. Wait for both services to deploy. The frontend will automatically be configured to connect to the backend.
 
 #### Option 2: Using the Deployment Script
 
@@ -114,6 +122,16 @@ This project is configured for easy deployment to Render using the included `ren
 4. The script will deploy the application using the `render.yaml` blueprint.
 
 5. After deployment, add your NewsAPI key as an environment variable in the Render dashboard.
+
+### Important Notes for Render Deployment
+
+1. The backend service uses Docker and will automatically use the Dockerfile in the repository.
+
+2. The frontend service is configured to use the backend service's host, with HTTPS protocol.
+
+3. Both services are set to auto-deploy when changes are pushed to the repository.
+
+4. The health check endpoint at `/health` is used to monitor the backend service.
 
 ### Environment Variables
 

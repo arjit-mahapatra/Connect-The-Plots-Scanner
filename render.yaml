@@ -7,6 +7,8 @@ services:
     envVars:
       - key: NEWS_API_KEY
         sync: false
+      - key: PORT
+        value: 8000
     healthCheckPath: /health
     buildCommand: echo "Docker build handled by Dockerfile"
     autoDeploy: true
