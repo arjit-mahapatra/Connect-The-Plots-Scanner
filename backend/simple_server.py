@@ -54,6 +54,35 @@ async def health_check():
 @app.get("/api/newsapi/top-headlines")
 async def get_top_headlines(category: str = "business", country: str = "us"):
     try:
+        if not NEWS_API_KEY:
+            # Return mock data if no API key is provided
+            return {
+                "status": "ok",
+                "totalResults": 2,
+                "articles": [
+                    {
+                        "source": {"id": "mock-source", "name": "Mock News"},
+                        "author": "Mock Author",
+                        "title": "Mock Business Headline 1",
+                        "description": "This is a mock business headline because the NEWS_API_KEY environment variable is not set.",
+                        "url": "https://example.com/mock-news-1",
+                        "urlToImage": "https://example.com/mock-image-1.jpg",
+                        "publishedAt": datetime.datetime.now().isoformat(),
+                        "content": "This is mock content. Please set the NEWS_API_KEY environment variable in the Render dashboard."
+                    },
+                    {
+                        "source": {"id": "mock-source", "name": "Mock News"},
+                        "author": "Mock Author",
+                        "title": "Mock Business Headline 2",
+                        "description": "This is another mock business headline because the NEWS_API_KEY environment variable is not set.",
+                        "url": "https://example.com/mock-news-2",
+                        "urlToImage": "https://example.com/mock-image-2.jpg",
+                        "publishedAt": (datetime.datetime.now() - datetime.timedelta(hours=1)).isoformat(),
+                        "content": "This is mock content. Please set the NEWS_API_KEY environment variable in the Render dashboard."
+                    }
+                ]
+            }
+        
         url = f"{NEWS_API_URL}/top-headlines"
         params = {
             "apiKey": NEWS_API_KEY,
@@ -69,6 +98,35 @@ async def get_top_headlines(category: str = "business", country: str = "us"):
 @app.get("/api/newsapi/everything")
 async def get_everything(q: str, sortBy: str = "publishedAt", language: str = "en"):
     try:
+        if not NEWS_API_KEY:
+            # Return mock data if no API key is provided
+            return {
+                "status": "ok",
+                "totalResults": 2,
+                "articles": [
+                    {
+                        "source": {"id": "mock-source", "name": "Mock News"},
+                        "author": "Mock Author",
+                        "title": f"Mock Search Result for '{q}' 1",
+                        "description": "This is a mock search result because the NEWS_API_KEY environment variable is not set.",
+                        "url": "https://example.com/mock-search-1",
+                        "urlToImage": "https://example.com/mock-image-1.jpg",
+                        "publishedAt": datetime.datetime.now().isoformat(),
+                        "content": "This is mock content. Please set the NEWS_API_KEY environment variable in the Render dashboard."
+                    },
+                    {
+                        "source": {"id": "mock-source", "name": "Mock News"},
+                        "author": "Mock Author",
+                        "title": f"Mock Search Result for '{q}' 2",
+                        "description": "This is another mock search result because the NEWS_API_KEY environment variable is not set.",
+                        "url": "https://example.com/mock-search-2",
+                        "urlToImage": "https://example.com/mock-image-2.jpg",
+                        "publishedAt": (datetime.datetime.now() - datetime.timedelta(hours=1)).isoformat(),
+                        "content": "This is mock content. Please set the NEWS_API_KEY environment variable in the Render dashboard."
+                    }
+                ]
+            }
+            
         url = f"{NEWS_API_URL}/everything"
         params = {
             "apiKey": NEWS_API_KEY,
