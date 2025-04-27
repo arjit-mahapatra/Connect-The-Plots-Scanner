@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
+import HomePage from './components/HomePage';
 
 // Configuration
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -1231,7 +1232,7 @@ function App() {
           <Navbar />
           <main>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/news/:newsId" element={<NewsDetail />} />
               <Route path="/stocks" element={<StocksList />} />
               <Route path="/stocks/:stockId" element={<StockDetail />} />

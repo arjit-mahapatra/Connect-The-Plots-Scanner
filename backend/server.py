@@ -20,6 +20,10 @@ from passlib.context import CryptContext
 
 # Setup 
 ROOT_DIR = Path(__file__).parent
+
+# NewsAPI setup
+NEWS_API_KEY = os.environ.get('NEWS_API_KEY')
+NEWS_API_URL = "https://newsapi.org/v2"
 # Load .env but ONLY if the environment variables don't already exist
 # This ensures Render's environment variables take precedence
 load_dotenv(ROOT_DIR / '.env', override=False)
@@ -549,6 +553,52 @@ async def init_db():
 @api_router.get("/")
 async def root():
     return {"message": "Welcome to the Stock Impact News Scanner API"}
+
+# NewsAPI Routes
+@api_router.get("/newsapi/top-headlines")
+async def get_top_headlines(category: str = "business", country: str = "us"):
+    try:
+        url = f"{NEWS_API_URL}/top-headlines"
+        params = {
+            "apiKey": NEWS_API_KEY,
+            "category": category,
+            "country": country
+        }
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/newsapi/everything")
+async def get_everything(q: str, sortBy: str = "publishedAt", language: str = "en"):
+    try:
+        url = f"{NEWS_API_URL}/everything"
+        params = {
+            "apiKey": NEWS_API_KEY,
+            "q": q,
+            "sortBy": sortBy,
+            "language": language
+        }
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/stock/{symbol}")
+async def get_stock_data(symbol: str):
+    try:
+        # This is a mock implementation since we're removing Finnhub
+        # In a real application, you would integrate with a stock data API
+        mock_data = {
+            "symbol": symbol,
+            "price": round(random.uniform(50, 500), 2),
+            "change": round(random.uniform(-5, 5), 2)
+        }
+        return mock_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # News Routes
 @api_router.get("/news", response_model=List[NewsItem])
