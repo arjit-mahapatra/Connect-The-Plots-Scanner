@@ -1,0 +1,30 @@
+{
+  "name": "stocknewsscanner",
+  "version": "1.0.0",
+  "description": "Financial news scanner to identify stocks affected by current events",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd backend && gunicorn server:app -k uvicorn.workers.UvicornWorker",
+    "heroku-postbuild": "cd frontend && yarn install && yarn build"
+  },
+  "engines": {
+    "node": ">=16",
+    "yarn": ">=1.22.0",
+    "npm": "please-use-yarn"
+  },
+  "cacheDirectories": [
+    "frontend/node_modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/stocknewsscanner.git"
+  },
+  "keywords": [
+    "stocks",
+    "news",
+    "finance",
+    "ai"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
