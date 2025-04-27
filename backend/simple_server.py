@@ -105,9 +105,13 @@ async def get_stock_data(symbol: str):
 
 # Mount static files for frontend
 frontend_build_dir = Path(__file__).parent.parent / "frontend" / "build"
+print(f"Looking for frontend build directory at: {frontend_build_dir}")
+print(f"Frontend build directory exists: {frontend_build_dir.exists()}")
+print(f"Contents of parent directory: {list(frontend_build_dir.parent.iterdir())}")
 
 # Check if frontend build directory exists
 if frontend_build_dir.exists():
+    print(f"Frontend build directory contents: {list(frontend_build_dir.iterdir())}")
     # Mount static files directory
     app.mount("/static", StaticFiles(directory=str(frontend_build_dir / "static")), name="static")
     
