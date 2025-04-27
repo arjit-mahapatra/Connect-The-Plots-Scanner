@@ -6,8 +6,8 @@ services:
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && python -m gunicorn server:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120
     envVars:
-      - key: MONGO_URL
-        value: mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner
+      # connection_string should be set in the Render dashboard
+      # The MONGO_URL below is just a fallback
       - key: DB_NAME
         value: stock_news_db
       - key: SECRET_KEY
