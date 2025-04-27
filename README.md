@@ -77,7 +77,7 @@ A financial dashboard application that displays stock market news and performanc
 
 ## Deployment to Render
 
-This project is configured for easy deployment to Render using the included `render.yaml` blueprint.
+This project is configured for easy deployment to Render as a single web service using the included `render.yaml` blueprint.
 
 ### Deployment Steps
 
@@ -91,19 +91,17 @@ This project is configured for easy deployment to Render using the included `ren
 
 4. Connect your GitHub account and select the repository.
 
-5. Render will automatically detect the `render.yaml` file and create the necessary services:
-   - Backend API service (Docker)
-   - Frontend web service (Node.js)
+5. Render will automatically detect the `render.yaml` file and create a web service named `connect-the-plots`.
 
-6. Add your NewsAPI key as an environment variable for the backend service:
-   - Go to the backend service in the Render dashboard
+6. Add your NewsAPI key as an environment variable:
+   - Go to the web service in the Render dashboard
    - Navigate to the "Environment" tab
    - Add a new environment variable:
      - Key: `NEWS_API_KEY`
      - Value: Your NewsAPI key
    - Save changes and deploy
 
-7. Wait for both services to deploy. The frontend will automatically be configured to connect to the backend.
+7. Wait for the service to deploy. The application will be available at the URL provided by Render.
 
 #### Option 2: Using the Deployment Script
 
@@ -125,13 +123,18 @@ This project is configured for easy deployment to Render using the included `ren
 
 ### Important Notes for Render Deployment
 
-1. The backend service uses Docker and will automatically use the Dockerfile in the repository.
+1. The application is deployed as a single web service using Docker.
 
-2. The frontend service is configured to use the backend service's host, with HTTPS protocol.
+2. The Dockerfile is configured to:
+   - Build the React frontend
+   - Set up the Python backend
+   - Serve both from the same origin
 
-3. Both services are set to auto-deploy when changes are pushed to the repository.
+3. The backend server is configured to serve the frontend static files, eliminating the need for separate services.
 
-4. The health check endpoint at `/health` is used to monitor the backend service.
+4. The health check endpoint at `/health` is used to monitor the service.
+
+5. The service is set to auto-deploy when changes are pushed to the repository.
 
 ### Environment Variables
 

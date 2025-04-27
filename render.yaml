@@ -1,7 +1,7 @@
 services:
-  # Backend API service
+  # Combined backend and frontend service
   - type: web
-    name: connect-the-plots-backend
+    name: connect-the-plots
     runtime: docker
     dockerfilePath: ./Dockerfile
     envVars:
@@ -9,22 +9,8 @@ services:
         sync: false
       - key: PORT
         value: 8000
+      - key: REACT_APP_BACKEND_URL
+        value: ""  # Empty since frontend and backend are on the same origin
     healthCheckPath: /health
     buildCommand: echo "Docker build handled by Dockerfile"
-    autoDeploy: true
-
-  # Frontend web service
-  - type: web
-    name: connect-the-plots-frontend
-    runtime: node
-    buildCommand: cd frontend && yarn install && yarn build
-    startCommand: cd frontend && npx serve -s build -l $PORT
-    envVars:
-      - key: REACT_APP_BACKEND_URL
-        fromService:
-          name: connect-the-plots-backend
-          type: web
-          property: host
-      - key: NODE_VERSION
-        value: 16.13.0
     autoDeploy: true
