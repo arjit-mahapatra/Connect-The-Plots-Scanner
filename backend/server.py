@@ -457,19 +457,23 @@ async def init_db():
             
             # Create associated comments
             for comment in mock_comments:
-                if comment["username"] in user_ids:
-                    comment["user_id"] = user_ids[comment["username"]]
+                # Only create comments if they don't exist yet
+                existing_comment = await db.comments.find_one({"post_id": post_id, "username": comment["username"]})
                 
-                comment["post_id"] = post_id
-                comment["id"] = str(uuid.uuid4())
-                
-                await db.comments.insert_one(comment)
-                
-                # Add comment ID to post's comments list
-                await db.forum_posts.update_one(
-                    {"id": post_id},
-                    {"$push": {"comments": comment["id"]}}
-                )
+                if not existing_comment:
+                    if comment["username"] in user_ids:
+                        comment["user_id"] = user_ids[comment["username"]]
+                    
+                    comment["post_id"] = post_id
+                    comment["id"] = str(uuid.uuid4())
+                    
+                    await db.comments.insert_one(comment)
+                    
+                    # Add comment ID to post's comments list
+                    await db.forum_posts.update_one(
+                        {"id": post_id},
+                        {"$push": {"comments": comment["id"]}}
+                    )
         
         logger.info("Initialized forum posts and comments with mock data")
 
