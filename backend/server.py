@@ -20,15 +20,28 @@ from passlib.context import CryptContext
 
 # Setup 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+# Load .env but ONLY if the environment variables don't already exist
+# This ensures Render's environment variables take precedence
+load_dotenv(ROOT_DIR / '.env', override=False)
 
 # MongoDB connection
 import sys
 
+# Define Atlas connection string directly to ensure it's used
+ATLAS_MONGO_URL = "mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner"
+
 try:
-    # Default to environment variable, fall back to hardcoded connection if not available
-    # Note: In production, always use environment variables for sensitive credentials
-    mongo_url = os.environ.get('MONGO_URL', 'mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner')
+    # Check if we're in production or dev environment
+    is_production = os.environ.get('RENDER', '') == 'true'
+    
+    if is_production:
+        # In production, use Atlas connection directly
+        mongo_url = ATLAS_MONGO_URL
+        print(f"Using production MongoDB Atlas connection")
+    else:
+        # In dev, allow for environment variable override
+        mongo_url = os.environ.get('MONGO_URL', ATLAS_MONGO_URL)
+        print(f"Using development MongoDB connection: {mongo_url}")
     
     # Set a reasonable timeout for connection
     client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=10000)
