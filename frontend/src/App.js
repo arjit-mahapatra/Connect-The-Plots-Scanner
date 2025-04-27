@@ -127,35 +127,41 @@ function Navbar() {
 
 function NewsCard({ news }) {
   return (
-    <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-xl">
-      <div className="p-6">
-        <div className="flex justify-between items-start">
-          <h3 className="text-xl font-bold text-white mb-2">{news.title}</h3>
-          <div className="flex items-center bg-blue-600 text-white text-xs font-semibold rounded-full px-2 py-1">
-            {news.confidence_score.toFixed(2)} confidence
+    <Link to={`/news/${news.id}`} className="block hover:no-underline">
+      <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-xl">
+        <div className="p-6">
+          <div className="flex justify-between items-start">
+            <h3 className="text-xl font-bold text-white mb-2">{news.title}</h3>
+            <div className="flex items-center bg-blue-600 text-white text-xs font-semibold rounded-full px-2 py-1">
+              {news.confidence_score.toFixed(2)} confidence
+            </div>
+          </div>
+          <p className="text-gray-300 mb-4">{news.content}</p>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {news.affected_stocks.map(stock => (
+              <span 
+                key={stock}
+                className="bg-indigo-600 text-white px-2 py-1 rounded text-sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  window.location.href = `/stocks/${stock}`;
+                }}
+              >
+                {stock}
+              </span>
+            ))}
+          </div>
+          <div className="flex justify-between items-center text-sm text-gray-400">
+            <span>Source: {news.source}</span>
+            <span>{formatDate(news.published_at)}</span>
+          </div>
+          <div className="mt-4 text-sm text-gray-400">
+            <span>Validated by: {news.validated_sources.join(', ')}</span>
           </div>
         </div>
-        <p className="text-gray-300 mb-4">{news.content}</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {news.affected_stocks.map(stock => (
-            <Link 
-              key={stock} 
-              to={`/stocks/${stock}`}
-              className="bg-indigo-600 text-white px-2 py-1 rounded text-sm"
-            >
-              {stock}
-            </Link>
-          ))}
-        </div>
-        <div className="flex justify-between items-center text-sm text-gray-400">
-          <span>Source: {news.source}</span>
-          <span>{formatDate(news.published_at)}</span>
-        </div>
-        <div className="mt-4 text-sm text-gray-400">
-          <span>Validated by: {news.validated_sources.join(', ')}</span>
-        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
