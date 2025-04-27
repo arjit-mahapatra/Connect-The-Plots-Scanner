@@ -51,12 +51,14 @@ StockNewsScanner aggregates news from various financial platforms, validates inf
 
 ## Installation
 
-### Prerequisites
+### Local Development
+
+#### Prerequisites
 - Node.js (v16+)
 - Python (v3.9+)
 - MongoDB
 
-### Backend Setup
+#### Backend Setup
 ```bash
 # Navigate to backend directory
 cd backend
@@ -74,7 +76,7 @@ pip install -r requirements.txt
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 ```
 
-### Frontend Setup
+#### Frontend Setup
 ```bash
 # Navigate to frontend directory
 cd frontend
@@ -89,6 +91,38 @@ yarn install
 # Start the frontend development server
 yarn start
 ```
+
+### Render Deployment
+
+This application is fully configured for deployment on Render.com with a `render.yaml` file at the root:
+
+1. **Fork/Clone this Repository**: Make sure you have a copy in your GitHub account
+
+2. **Sign up for Render**: Create an account at [render.com](https://render.com)
+
+3. **Deploy the Blueprint**:
+   - In your Render dashboard, click "New +"
+   - Select "Blueprint"
+   - Connect your GitHub repository
+   - Render will automatically detect the `render.yaml` file
+   - Click "Apply"
+
+4. **Configure Environment Variables**:
+   - Render will automatically set up the MongoDB database and necessary environment variables
+   - For OpenAI integration, add your API key manually in the backend service environment variables:
+     ```
+     AI_PROVIDER=openai
+     AI_API_KEY=your_openai_api_key
+     ```
+
+5. **Wait for Deployment**:
+   - Render will build and deploy both the frontend and backend services
+   - This usually takes a few minutes
+   - Once complete, you can access your app at the provided URLs
+
+6. **Access Your Application**:
+   - Frontend: `https://stocknewsscanner-frontend.onrender.com`
+   - Backend API: `https://stocknewsscanner-api.onrender.com/api`
 
 ## Usage
 
