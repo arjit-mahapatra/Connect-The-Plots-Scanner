@@ -27,21 +27,23 @@ load_dotenv(ROOT_DIR / '.env', override=False)
 # MongoDB connection
 import sys
 
-# Define Atlas connection string directly to ensure it's used
-ATLAS_MONGO_URL = "mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner"
-
+# Get connection string from environment variable
 try:
     # Check if we're in production or dev environment
     is_production = os.environ.get('RENDER', '') == 'true'
     
     if is_production:
-        # In production, use Atlas connection directly
-        mongo_url = ATLAS_MONGO_URL
-        print(f"Using production MongoDB Atlas connection")
+        # In production, use the connection_string environment variable
+        mongo_url = os.environ.get('connection_string')
+        if not mongo_url:
+            print("WARNING: 'connection_string' environment variable not found, falling back to MONGO_URL")
+            mongo_url = os.environ.get('MONGO_URL')
+            
+        print(f"Using production MongoDB connection")
     else:
-        # In dev, allow for environment variable override
-        mongo_url = os.environ.get('MONGO_URL', ATLAS_MONGO_URL)
-        print(f"Using development MongoDB connection: {mongo_url}")
+        # In dev, use MONGO_URL from .env file
+        mongo_url = os.environ.get('MONGO_URL')
+        print(f"Using development MongoDB connection")
     
     # Set a reasonable timeout for connection
     client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=10000)
