@@ -451,7 +451,9 @@ function StockDetail() {
   const [isFavorite, setIsFavorite] = useState(false);
   
   useEffect(() => {
-    fetchStockDetail();
+    if (stockId) {
+      fetchStockDetail();
+    }
   }, [stockId]);
   
   useEffect(() => {
@@ -463,6 +465,7 @@ function StockDetail() {
   const fetchStockDetail = async () => {
     try {
       setLoading(true);
+      console.log(`Fetching stock details for: ${stockId}`);
       const stockResponse = await axios.get(`${API}/stocks/${stockId}`);
       setStock(stockResponse.data);
       
