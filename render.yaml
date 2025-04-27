@@ -22,7 +22,7 @@ services:
         fromService:
           name: connect-the-plots-backend
           type: web
-          property: url
+          property: host
       - key: NODE_VERSION
         value: 16.13.0
     autoDeploy: true

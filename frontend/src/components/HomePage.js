@@ -44,7 +44,12 @@ const HomePage = () => {
   const fetchData = async () => {
     try {
       // Fetch business news from NewsAPI
-      const newsResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/newsapi/top-headlines?category=business&country=us`);
+        // Ensure the backend URL has the correct protocol
+        const backendUrl = process.env.REACT_APP_BACKEND_URL.startsWith('http') 
+          ? process.env.REACT_APP_BACKEND_URL 
+          : `https://${process.env.REACT_APP_BACKEND_URL}`;
+        
+        const newsResponse = await axios.get(`${backendUrl}/api/newsapi/top-headlines?category=business&country=us`);
       const formattedNews = newsResponse.data.articles.map((item, index) => ({
         id: index,
         headline: item.title,
