@@ -64,10 +64,28 @@ async def get_everything(q: str, sortBy: str = "publishedAt", language: str = "e
 @app.get("/api/stock/{symbol}")
 async def get_stock_data(symbol: str):
     try:
+        # Stock names and price ranges for more realistic mock data
+        stock_info = {
+            "AAPL": {"name": "Apple Inc.", "min": 150, "max": 200},
+            "GOOGL": {"name": "Alphabet Inc.", "min": 120, "max": 150},
+            "MSFT": {"name": "Microsoft Corp.", "min": 300, "max": 350},
+            "AMZN": {"name": "Amazon.com Inc.", "min": 120, "max": 150},
+            "TSLA": {"name": "Tesla Inc.", "min": 150, "max": 200},
+            "META": {"name": "Meta Platforms Inc.", "min": 300, "max": 350},
+            "NVDA": {"name": "NVIDIA Corp.", "min": 700, "max": 800},
+            "JPM": {"name": "JPMorgan Chase & Co.", "min": 150, "max": 200},
+            "V": {"name": "Visa Inc.", "min": 230, "max": 280},
+            "JNJ": {"name": "Johnson & Johnson", "min": 150, "max": 180}
+        }
+        
+        # Use stock-specific price range if available, otherwise use default
+        info = stock_info.get(symbol, {"name": symbol, "min": 50, "max": 500})
+        
         # Mock stock data
         mock_data = {
             "symbol": symbol,
-            "price": round(random.uniform(50, 500), 2),
+            "name": info["name"],
+            "price": round(random.uniform(info["min"], info["max"]), 2),
             "change": round(random.uniform(-5, 5), 2)
         }
         return mock_data

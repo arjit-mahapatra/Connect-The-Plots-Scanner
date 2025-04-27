@@ -63,7 +63,7 @@ const HomePage = () => {
           const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stock/${symbol}`);
           return {
             symbol,
-            name: getStockName(symbol),
+            name: response.data.name || getStockName(symbol),
             price: response.data.price.toFixed(2),
             change: `${response.data.change > 0 ? '+' : ''}${response.data.change.toFixed(2)}%`
           };
@@ -90,7 +90,12 @@ const HomePage = () => {
       "GOOGL": "Alphabet Inc.",
       "MSFT": "Microsoft Corp.",
       "AMZN": "Amazon.com Inc.",
-      "TSLA": "Tesla Inc."
+      "TSLA": "Tesla Inc.",
+      "META": "Meta Platforms Inc.",
+      "NVDA": "NVIDIA Corp.",
+      "JPM": "JPMorgan Chase & Co.",
+      "V": "Visa Inc.",
+      "JNJ": "Johnson & Johnson"
     };
     return stockNames[symbol] || symbol;
   };
