@@ -748,8 +748,22 @@ async def upvote_post(post_id: str, current_user: User = Depends(get_current_use
 # Initialize database on startup
 @app.on_event("startup")
 async def startup_event():
-    await init_db()
-    logger.info("Database initialized")
+    try:
+        logger.info("Starting application initialization...")
+        logger.info("Testing MongoDB connection...")
+        # Just a basic command to verify connection works
+        await client.admin.command('ping')
+        logger.info("MongoDB connection test successful")
+        
+        # Initialize database
+        await init_db()
+        logger.info("Database initialization completed")
+    except Exception as e:
+        logger.error(f"Error during application startup: {str(e)}")
+        print(f"APPLICATION STARTUP ERROR: {str(e)}", file=sys.stderr)
+        # In production, you might want to exit here
+        # But for now, we'll continue to allow the application to start
+        # Even with DB issues so we can at least debug
 
 # Include the router in the main app
 app.include_router(api_router)
