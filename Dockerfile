@@ -1,5 +1,5 @@
 # Use Node.js to build the frontend
-FROM node:16-alpine as frontend-builder
+FROM node:20-alpine as frontend-builder
 
 # Set working directory for frontend
 WORKDIR /app/frontend

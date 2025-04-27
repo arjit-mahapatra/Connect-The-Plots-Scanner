@@ -11,6 +11,8 @@ services:
         value: 8000
       - key: REACT_APP_BACKEND_URL
         value: ""  # Empty since frontend and backend are on the same origin
+      - key: NODE_VERSION
+        value: 20.0.0
     healthCheckPath: /health
     buildCommand: echo "Docker build handled by Dockerfile"
     autoDeploy: true
