@@ -29,6 +29,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add middleware for security headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    # Allow JavaScript execution
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;"
+    # Other security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+
 # We'll move the root endpoint to /api to avoid conflicts with the frontend
 @app.get("/api")
 async def api_root():
@@ -112,8 +124,15 @@ print(f"Contents of parent directory: {list(frontend_build_dir.parent.iterdir())
 # Check if frontend build directory exists
 if frontend_build_dir.exists():
     print(f"Frontend build directory contents: {list(frontend_build_dir.iterdir())}")
-    # Mount static files directory
+    # Mount static files directory - make sure to serve all static files, not just the /static directory
     app.mount("/static", StaticFiles(directory=str(frontend_build_dir / "static")), name="static")
+    # Also mount any other static files at the root level
+    for item in frontend_build_dir.iterdir():
+        if item.is_file() and item.name != "index.html":
+            print(f"Mounting static file: {item.name}")
+            @app.get(f"/{item.name}")
+            async def serve_static_file(item=item):
+                return FileResponse(str(item))
     
     # Add a route to serve index.html at the root
     @app.get("/")
