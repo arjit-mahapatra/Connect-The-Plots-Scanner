@@ -114,9 +114,9 @@ This application is fully configured for deployment on Render.com with a `render
      AI_PROVIDER=openai
      AI_API_KEY=your_openai_api_key
      ```
-   - The MongoDB connection is already set in render.yaml, but you can update it if needed:
+   - Set your MongoDB connection string in the Render dashboard:
      ```
-     MONGO_URL=your_mongodb_atlas_connection_string
+     connection_string=your_mongodb_atlas_connection_string
      DB_NAME=stock_news_db
      ```
 
