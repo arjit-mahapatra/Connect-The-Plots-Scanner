@@ -23,9 +23,25 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'news_scanner_db')]
+import sys
+
+try:
+    # Default to environment variable, fall back to hardcoded connection if not available
+    # Note: In production, always use environment variables for sensitive credentials
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner')
+    
+    # Set a reasonable timeout for connection
+    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=10000)
+    
+    # This database name should match what you want to use in MongoDB Atlas
+    db_name = os.environ.get('DB_NAME', 'stock_news_db')
+    db = client[db_name]
+    
+    print(f"MongoDB connection successful to database: {db_name}")
+except Exception as e:
+    print(f"MongoDB connection error: {e}", file=sys.stderr)
+    # In production, you might want to handle this more gracefully
+    # sys.exit(1)  # Uncomment to exit on connection failure
 
 # For Render deployment
 PORT = int(os.environ.get("PORT", 8001))
