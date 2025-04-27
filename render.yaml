@@ -4,12 +4,10 @@ services:
     name: stocknewsscanner-api
     env: python
     buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && gunicorn server:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    startCommand: cd backend && python -m gunicorn server:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: MONGO_URL
-        fromDatabase:
-          name: stocknewsscanner-db
-          property: connectionString
+        value: mongodb+srv://mahapatraarjit:Fk9fACF6B0eyq4F3@stockscanner.3hcdquc.mongodb.net/?retryWrites=true&w=majority&appName=StockScanner
       - key: DB_NAME
         value: stock_news_db
       - key: SECRET_KEY
@@ -26,9 +24,3 @@ services:
     envVars:
       - key: REACT_APP_BACKEND_URL
         value: https://stocknewsscanner-api.onrender.com/api
-
-# Database
-databases:
-  - name: stocknewsscanner-db
-    plan: free
-    type: mongo
