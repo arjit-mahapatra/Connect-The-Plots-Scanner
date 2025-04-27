@@ -1,221 +1,139 @@
-# StockNewsScanner 📈📰
+# Connect The Plots Scanner
 
-A sophisticated web application that scans financial news from multiple sources to identify stocks potentially affected by current geopolitical, economic, and social developments.
-
-## Overview
-
-StockNewsScanner aggregates news from various financial platforms, validates information across multiple sources, and uses AI to explain potential impacts on relevant stocks. The application provides confidence scores based on cross-source validation and offers a community forum for users to discuss trading strategies.
-
-![StockNewsScanner Screenshot](https://github.com/yourusername/stocknewsscanner/raw/main/screenshot.png)
+A financial dashboard application that displays stock market news and performance data for stocks, mutual funds, and ETFs.
 
 ## Features
 
-### News Analysis
-- **Multi-Source Aggregation**: Collects financial news from various reputable sources
-- **Cross-Validation**: Verifies news across multiple sources to increase confidence
-- **AI-Powered Analysis**: Explains potential impacts on stocks (requires API key)
-- **Confidence Scoring**: Ranks news reliability based on source validation
+- Real-time financial data display with automatic rotation between stocks, mutual funds, and ETFs every 20 seconds
+- Latest business news from NewsAPI
+- Dark theme UI with responsive design
+- Countdown timer showing time until next data rotation
+- Manual selection between different financial instrument types
+- Displays 10 instruments for each category
 
-### Stock Impact Assessment
-- **Global Market Coverage**: Covers all major stock exchanges worldwide
-- **Impact Explanations**: Provides detailed reasoning for each stock affected
-- **Positive/Negative Impact Indicators**: Visual indicators for market sentiment
+## Tech Stack
 
-### User Features
-- **User Accounts**: Personal accounts for saving preferences
-- **Favorite Stocks**: Save and monitor specific stocks
-- **Personalized Feed**: Focus on news affecting your favorite stocks
+- **Backend**: FastAPI (Python)
+- **Frontend**: React with Tailwind CSS
+- **Data Sources**: NewsAPI for business news, mock data for financial instruments
 
-### Community Forum
-- **Strategy Sharing**: Reddit-style community for sharing trading strategies
-- **Discussion Threads**: Comment on posts and engage with other traders
-- **Stock Tagging**: Tag relevant stocks in discussions
+## Local Development
 
-## Technology Stack
+### Prerequisites
 
-### Backend
-- **FastAPI**: High-performance API framework
-- **MongoDB**: NoSQL database for flexible data storage
-- **JWT Authentication**: Secure user authentication
-- **Async Architecture**: Non-blocking request handling
+- Python 3.9+
+- Node.js 16+
+- Yarn
 
-### Frontend
-- **React**: Component-based UI library
-- **Tailwind CSS**: Utility-first CSS framework
-- **Axios**: Promise-based HTTP client
-- **React Router**: Declarative routing
+### Backend Setup
 
-### AI Integration
-- **Modular Design**: Easily swap between AI providers (OpenAI, Claude, Perplexity)
-- **Placeholder Implementation**: Ready for API key integration
-
-## Installation
-
-### Local Development
-
-#### Prerequisites
-- Node.js (v16+)
-- Python (v3.9+)
-- MongoDB
-
-#### Backend Setup
-```bash
-# Navigate to backend directory
-cd backend
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set environment variables
-# Create .env file with:
-# MONGO_URL="mongodb://localhost:27017"
-# DB_NAME="news_scanner_db"
-# SECRET_KEY="your_secret_key"
-
-# Start the backend server
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-```
-
-#### Frontend Setup
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-yarn install
-
-# Set environment variables
-# Create .env file with:
-# REACT_APP_BACKEND_URL="http://localhost:8001/api"
-
-# Start the frontend development server
-yarn start
-```
-
-### Render Deployment
-
-This application is fully configured for deployment on Render.com with a `render.yaml` file at the root:
-
-1. **Fork/Clone this Repository**: Make sure you have a copy in your GitHub account
-
-2. **Sign up for Render**: Create an account at [render.com](https://render.com)
-
-3. **Deploy the Blueprint**:
-   - In your Render dashboard, click "New +"
-   - Select "Blueprint"
-   - Connect your GitHub repository
-   - Render will automatically detect the `render.yaml` file
-   - Click "Apply"
-
-4. **Configure Environment Variables**:
-   - The application is pre-configured to use a MongoDB Atlas instance
-   - For OpenAI integration, add your API key manually in the backend service environment variables:
-     ```
-     AI_PROVIDER=openai
-     AI_API_KEY=your_openai_api_key
-     ```
-   - Set your MongoDB connection string in the Render dashboard:
-     ```
-     connection_string=your_mongodb_atlas_connection_string
-     DB_NAME=stock_news_db
-     ```
-
-5. **Wait for Deployment**:
-   - Render will build and deploy both the frontend and backend services
-   - This usually takes a few minutes
-   - Once complete, you can access your app at the provided URLs
-
-6. **Access Your Application**:
-   - Frontend: `https://stocknewsscanner-frontend.onrender.com`
-   - Backend API: `https://stocknewsscanner-api.onrender.com/api`
-
-## Usage
-
-### Account Creation
-1. Register with email, username, and password
-2. Log in with your credentials
-3. Start exploring news and stocks
-
-### News Exploration
-- Browse the latest news on the homepage
-- Filter by category
-- Click on any news item for detailed information and stock impacts
-
-### Stock Monitoring
-- Browse all stocks on the Stocks page
-- Filter by exchange
-- Click on a stock to see detailed information and related news
-- Add stocks to favorites for quick access
-
-### Community Engagement
-- Browse forum posts on the Forum page
-- Create new posts to share strategies
-- Comment on existing posts
-- Tag relevant stocks in your posts
-
-## API Reference
-
-### News Endpoints
-- `GET /api/news`: List all news items
-- `GET /api/news?category={category}`: Filter news by category
-- `GET /api/news/{news_id}`: Get specific news item
-- `GET /api/news/{news_id}/impacts`: Get stock impacts for a news item
-
-### Stock Endpoints
-- `GET /api/stocks`: List all stocks
-- `GET /api/stocks?exchange={exchange}`: Filter stocks by exchange
-- `GET /api/stocks/{stock_id}`: Get specific stock
-- `GET /api/stocks/{stock_id}/news`: Get news affecting a specific stock
-
-### User Endpoints
-- `POST /api/users`: Create new user
-- `POST /api/login`: User login
-- `GET /api/users/me`: Get current user profile
-- `POST /api/users/me/favorite-stocks/{stock_id}`: Add stock to favorites
-- `DELETE /api/users/me/favorite-stocks/{stock_id}`: Remove stock from favorites
-
-### Forum Endpoints
-- `GET /api/forum/posts`: List all forum posts
-- `POST /api/forum/posts`: Create new forum post
-- `GET /api/forum/posts/{post_id}`: Get specific forum post
-- `POST /api/forum/posts/{post_id}/comments`: Add comment to post
-- `GET /api/forum/posts/{post_id}/comments`: Get comments for a post
-- `POST /api/forum/posts/{post_id}/upvote`: Upvote a post
-
-## AI Integration
-
-The application is designed with placeholders for AI integration. To enable AI-powered analysis:
-
-1. Obtain an API key from your preferred provider (OpenAI, Anthropic, Perplexity)
-2. Add the key to your backend `.env` file:
+1. Navigate to the backend directory:
    ```
-   AI_PROVIDER="openai"  # or "anthropic", "perplexity"
-   AI_API_KEY="your_api_key"
+   cd backend
    ```
-3. Restart the backend server
 
-## Future Enhancements
+2. Create a virtual environment:
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-- **Real-time News Updates**: WebSocket integration for live news feed
-- **Advanced Filtering**: More granular news and stock filtering options
-- **Notification System**: Alerts for news affecting favorite stocks
-- **Mobile App**: Native mobile applications for iOS and Android
-- **Portfolio Tracking**: Track performance of favorite stocks
-- **Enhanced AI Analysis**: More detailed impact predictions with confidence levels
+3. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-## Contributing
+4. Create a `.env` file with your NewsAPI key:
+   ```
+   NEWS_API_KEY=your_api_key_here
+   ```
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+5. Run the server:
+   ```
+   uvicorn simple_server:app --reload
+   ```
 
-## License
+### Frontend Setup
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
 
-## Acknowledgments
+2. Install dependencies:
+   ```
+   yarn install
+   ```
 
-- Financial data is mock data for demonstration purposes
-- News sources are simulated for the MVP
+3. Create a `.env` file:
+   ```
+   REACT_APP_BACKEND_URL=http://localhost:8000
+   ```
 
----
+4. Start the development server:
+   ```
+   yarn start
+   ```
 
-Built with ❤️ by Arjit Mahapatra
+## Deployment to Render
+
+This project is configured for easy deployment to Render using the included `render.yaml` blueprint.
+
+### Deployment Steps
+
+#### Option 1: Using the Render Dashboard
+
+1. Fork or clone this repository to your GitHub account.
+
+2. Sign up for a [Render account](https://render.com/) if you don't have one.
+
+3. In the Render dashboard, click on "New" and select "Blueprint".
+
+4. Connect your GitHub account and select the repository.
+
+5. Render will automatically detect the `render.yaml` file and create the necessary services.
+
+6. Add your NewsAPI key as an environment variable for the backend service.
+
+7. Deploy the services.
+
+#### Option 2: Using the Deployment Script
+
+1. Make sure the deployment script is executable:
+   ```
+   chmod +x deploy.sh
+   ```
+
+2. Run the deployment script:
+   ```
+   ./deploy.sh
+   ```
+
+3. Follow the prompts to log in to Render if needed.
+
+4. The script will deploy the application using the `render.yaml` blueprint.
+
+5. After deployment, add your NewsAPI key as an environment variable in the Render dashboard.
+
+### Environment Variables
+
+- **Backend**:
+  - `NEWS_API_KEY`: Your NewsAPI key
+
+- **Frontend**:
+  - `REACT_APP_BACKEND_URL`: Automatically set by Render to point to the backend service
+
+## Project Structure
+
+- `/backend`: FastAPI server code
+  - `simple_server.py`: Main server file with API endpoints
+  - `requirements.txt`: Python dependencies
+
+- `/frontend`: React application
+  - `/src`: Source code
+    - `/components`: React components
+    - `App.js`: Main application component
+  - `package.json`: Node.js dependencies
+
+- `Dockerfile`: Docker configuration for the backend
+- `render.yaml`: Render deployment configuration

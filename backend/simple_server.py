@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import random
 import requests
+import datetime
 from pathlib import Path
 
 # Setup
@@ -28,7 +29,12 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Stock News Scanner API"}
+    return {"message": "Welcome to the Stock News Scanner API", "status": "healthy"}
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Render"""
+    return {"status": "healthy", "timestamp": datetime.datetime.now().isoformat()}
 
 @app.get("/api/newsapi/top-headlines")
 async def get_top_headlines(category: str = "business", country: str = "us"):

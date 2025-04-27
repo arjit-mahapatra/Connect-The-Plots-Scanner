@@ -1,28 +1,29 @@
 services:
   # Backend API service
   - type: web
-    name: stocknewsscanner-api
-    env: python
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && python -m gunicorn server:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120
+    name: connect-the-plots-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     envVars:
-      # connection_string should be set in the Render dashboard
-      # The MONGO_URL below is just a fallback
-      - key: DB_NAME
-        value: stock_news_db
-      - key: SECRET_KEY
-        generateValue: true
-      - key: PORT
-        value: 8001
-      - key: RENDER
-        value: true
+      - key: NEWS_API_KEY
+        sync: false
+    healthCheckPath: /health
+    buildCommand: echo "Docker build handled by Dockerfile"
+    startCommand: uvicorn backend.simple_server:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
 
-  # Frontend service
+  # Frontend web service
   - type: web
-    name: stocknewsscanner-frontend
-    env: node
+    name: connect-the-plots-frontend
+    runtime: node
     buildCommand: cd frontend && yarn install && yarn build
-    startCommand: cd frontend && yarn global add serve && serve -s build -l $PORT
+    startCommand: cd frontend && npx serve -s build -l $PORT
     envVars:
       - key: REACT_APP_BACKEND_URL
-        value: https://stocknewsscanner-api.onrender.com/api
+        fromService:
+          name: connect-the-plots-backend
+          type: web
+          property: url
+      - key: NODE_VERSION
+        value: 16.13.0
+    autoDeploy: true
