@@ -17,4 +17,5 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 
 # Run the application
-CMD ["uvicorn", "backend.simple_server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use $PORT environment variable provided by Render
+CMD uvicorn backend.simple_server:app --host 0.0.0.0 --port ${PORT:-8000}
