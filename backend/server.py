@@ -27,6 +27,9 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ.get('DB_NAME', 'news_scanner_db')]
 
+# For Render deployment
+PORT = int(os.environ.get("PORT", 8001))
+
 # Create the main app
 app = FastAPI(title="Stock Impact News Scanner")
 
