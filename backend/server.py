@@ -396,105 +396,139 @@ def analyze_news_impact(news_item, stock):
 
 # DB initialization function
 async def init_db():
-    # Create indexes
-    await db.news.create_index("title")
-    await db.stocks.create_index("symbol", unique=True)
-    await db.users.create_index("username", unique=True)
-    await db.users.create_index("email", unique=True)
-    
-    # Initialize mock data if needed
-    if await db.stocks.count_documents({}) == 0:
-        await db.stocks.insert_many(mock_stocks)
-        logger.info("Initialized stocks collection with mock data")
-    
-    if await db.news_sources.count_documents({}) == 0:
-        await db.news_sources.insert_many(mock_news_sources)
-        logger.info("Initialized news sources collection with mock data")
-    
-    # Get stock IDs for reference
-    stocks = {stock["symbol"]: stock for stock in await db.stocks.find().to_list(1000)}
-    
-    # Create news items if none exist
-    if await db.news.count_documents({}) == 0:
-        for news_item in mock_news:
-            news_id = str(uuid.uuid4())
-            news_item["id"] = news_id
-            await db.news.insert_one(news_item)
-            
-            # Create impact records for affected stocks
-            for symbol in news_item["affected_stocks"]:
-                if symbol in stocks:
-                    stock = stocks[symbol]
-                    impact_analysis = analyze_news_impact(news_item, stock)
-                    
-                    impact = {
-                        "id": str(uuid.uuid4()),
-                        "news_id": news_id,
-                        "stock_id": stock["id"] if "id" in stock else "",
-                        "impact_score": impact_analysis["impact_score"],
-                        "explanation": impact_analysis["explanation"],
-                        "created_at": datetime.utcnow()
-                    }
-                    
-                    await db.stock_impacts.insert_one(impact)
+    try:
+        # Create indexes
+        logger.info("Creating database indexes...")
+        await db.news.create_index("title")
+        await db.stocks.create_index("symbol", unique=True)
+        await db.users.create_index("username", unique=True)
+        await db.users.create_index("email", unique=True)
         
-        logger.info("Initialized news collection with mock data")
-    
-    # Create users if none exist
-    user_ids = {}
-    if await db.users.count_documents({}) == 0:
-        for user_data in mock_users:
-            user_id = str(uuid.uuid4())
-            hashed_password = get_password_hash(user_data["password"])
-            
-            user = {
-                "id": user_id,
-                "email": user_data["email"],
-                "username": user_data["username"],
-                "hashed_password": hashed_password,
-                "favorite_stocks": user_data["favorite_stocks"],
-                "favorite_news": user_data["favorite_news"],
-                "created_at": datetime.utcnow()
-            }
-            
-            await db.users.insert_one(user)
-            user_ids[user_data["username"]] = user_id
+        # Initialize mock data if needed
+        logger.info("Checking if stock data initialization is needed...")
+        if await db.stocks.count_documents({}) == 0:
+            logger.info("Initializing stocks collection with mock data...")
+            await db.stocks.insert_many(mock_stocks)
+            logger.info("Initialized stocks collection with mock data")
+        else:
+            logger.info("Stocks collection already contains data, skipping initialization")
         
-        logger.info("Initialized users collection with mock data")
-    
-    # Create forum posts if none exist
-    if await db.forum_posts.count_documents({}) == 0:
-        for post_data in mock_posts:
-            post_id = str(uuid.uuid4())
-            
-            # Set user_id if available
-            if post_data["username"] in user_ids:
-                post_data["user_id"] = user_ids[post_data["username"]]
-            
-            post_data["id"] = post_id
-            await db.forum_posts.insert_one(post_data)
-            
-            # Create associated comments
-            for comment in mock_comments:
-                # Only create comments if they don't exist yet
-                existing_comment = await db.comments.find_one({"post_id": post_id, "username": comment["username"]})
+        logger.info("Checking if news sources initialization is needed...")
+        if await db.news_sources.count_documents({}) == 0:
+            logger.info("Initializing news sources collection with mock data...")
+            await db.news_sources.insert_many(mock_news_sources)
+            logger.info("Initialized news sources collection with mock data")
+        else:
+            logger.info("News sources collection already contains data, skipping initialization")
+        
+        # Get stock IDs for reference
+        logger.info("Fetching stock data for reference...")
+        stocks = {stock["symbol"]: stock for stock in await db.stocks.find().to_list(1000)}
+        
+        # Create news items if none exist
+        logger.info("Checking if news data initialization is needed...")
+        if await db.news.count_documents({}) == 0:
+            logger.info("Initializing news collection with mock data...")
+            for news_item in mock_news:
+                news_id = str(uuid.uuid4())
+                news_item["id"] = news_id
+                await db.news.insert_one(news_item)
                 
-                if not existing_comment:
-                    if comment["username"] in user_ids:
-                        comment["user_id"] = user_ids[comment["username"]]
-                    
-                    comment["post_id"] = post_id
-                    comment["id"] = str(uuid.uuid4())
-                    
-                    await db.comments.insert_one(comment)
-                    
-                    # Add comment ID to post's comments list
-                    await db.forum_posts.update_one(
-                        {"id": post_id},
-                        {"$push": {"comments": comment["id"]}}
-                    )
+                # Create impact records for affected stocks
+                for symbol in news_item["affected_stocks"]:
+                    if symbol in stocks:
+                        stock = stocks[symbol]
+                        impact_analysis = analyze_news_impact(news_item, stock)
+                        
+                        impact = {
+                            "id": str(uuid.uuid4()),
+                            "news_id": news_id,
+                            "stock_id": stock["id"] if "id" in stock else "",
+                            "impact_score": impact_analysis["impact_score"],
+                            "explanation": impact_analysis["explanation"],
+                            "created_at": datetime.utcnow()
+                        }
+                        
+                        await db.stock_impacts.insert_one(impact)
+            
+            logger.info("Initialized news collection with mock data")
+        else:
+            logger.info("News collection already contains data, skipping initialization")
         
-        logger.info("Initialized forum posts and comments with mock data")
+        # Create users if none exist
+        logger.info("Checking if user data initialization is needed...")
+        user_ids = {}
+        if await db.users.count_documents({}) == 0:
+            logger.info("Initializing users collection with mock data...")
+            for user_data in mock_users:
+                user_id = str(uuid.uuid4())
+                hashed_password = get_password_hash(user_data["password"])
+                
+                user = {
+                    "id": user_id,
+                    "email": user_data["email"],
+                    "username": user_data["username"],
+                    "hashed_password": hashed_password,
+                    "favorite_stocks": user_data["favorite_stocks"],
+                    "favorite_news": user_data["favorite_news"],
+                    "created_at": datetime.utcnow()
+                }
+                
+                await db.users.insert_one(user)
+                user_ids[user_data["username"]] = user_id
+            
+            logger.info("Initialized users collection with mock data")
+        else:
+            logger.info("Users collection already contains data, skipping initialization")
+            # Get existing user IDs for forum posts
+            async for user in db.users.find({}, {"username": 1, "id": 1}):
+                if "username" in user and "id" in user:
+                    user_ids[user["username"]] = user["id"]
+        
+        # Create forum posts if none exist
+        logger.info("Checking if forum posts initialization is needed...")
+        if await db.forum_posts.count_documents({}) == 0:
+            logger.info("Initializing forum posts and comments with mock data...")
+            for post_data in mock_posts:
+                post_id = str(uuid.uuid4())
+                
+                # Set user_id if available
+                if post_data["username"] in user_ids:
+                    post_data["user_id"] = user_ids[post_data["username"]]
+                
+                post_data["id"] = post_id
+                await db.forum_posts.insert_one(post_data)
+                
+                # Create associated comments
+                for comment in mock_comments:
+                    # Only create comments if they don't exist yet
+                    existing_comment = await db.comments.find_one({"post_id": post_id, "username": comment["username"]})
+                    
+                    if not existing_comment:
+                        if comment["username"] in user_ids:
+                            comment["user_id"] = user_ids[comment["username"]]
+                        
+                        comment["post_id"] = post_id
+                        comment["id"] = str(uuid.uuid4())
+                        
+                        await db.comments.insert_one(comment)
+                        
+                        # Add comment ID to post's comments list
+                        await db.forum_posts.update_one(
+                            {"id": post_id},
+                            {"$push": {"comments": comment["id"]}}
+                        )
+            
+            logger.info("Initialized forum posts and comments with mock data")
+        else:
+            logger.info("Forum posts collection already contains data, skipping initialization")
+        
+        logger.info("Database initialization completed successfully")
+    except Exception as e:
+        logger.error(f"Error during database initialization: {str(e)}")
+        print(f"Error during database initialization: {str(e)}", file=sys.stderr)
+        # Continue with application startup even if initialization fails
+        # In production, you might want to handle this differently
 
 # API Routes
 @api_router.get("/")
