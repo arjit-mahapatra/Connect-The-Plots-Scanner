@@ -84,17 +84,39 @@ class FinancialNewsAPITester:
 
     def test_login(self):
         """Test login and get token"""
-        success, response = self.run_test(
-            "Login",
-            "POST",
-            "login",
-            200,
-            data={"username": self.test_user, "password": self.test_password}
-        )
-        if success and 'access_token' in response:
-            self.token = response['access_token']
-            return True
-        return False
+        # The login endpoint expects form data, not JSON
+        url = f"{self.base_url}/login"
+        self.tests_run += 1
+        logger.info(f"\n🔍 Testing Login...")
+        
+        try:
+            response = requests.post(
+                url, 
+                data=f"username={self.test_user}&password={self.test_password}",
+                headers={'Content-Type': 'application/x-www-form-urlencoded'}
+            )
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                logger.info(f"✅ Passed - Status: {response.status_code}")
+                response_data = response.json()
+                if 'access_token' in response_data:
+                    self.token = response_data['access_token']
+                    return True
+                logger.error("Token not found in response")
+                return False
+            else:
+                logger.error(f"❌ Failed - Expected 200, got {response.status_code}")
+                try:
+                    error_detail = response.json()
+                    logger.error(f"Error details: {error_detail}")
+                except:
+                    logger.error(f"Response text: {response.text}")
+                return False
+        except Exception as e:
+            logger.error(f"❌ Failed - Error: {str(e)}")
+            return False
 
     def test_get_user_profile(self):
         """Test getting the current user profile"""
