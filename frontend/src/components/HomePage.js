@@ -65,7 +65,7 @@ const HomePage = () => {
       ];
       const stocksData = await Promise.all(
         stockSymbols.map(async (symbol) => {
-          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/stock/${symbol}`);
+          const response = await axios.get(`${backendUrl}/api/stock/${symbol}`);
           return {
             symbol,
             name: response.data.name || getStockName(symbol),
